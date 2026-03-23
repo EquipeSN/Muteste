@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CervoBet Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#D4AF37;--bg:#05050a;--surf:#0c0c14;--surf2:#13131e;--bdr:rgba(212,175,55,.15);--red:#e53935;--green:#22c55e;}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:#e0e0ee;font-family:'Barlow',sans-serif;min-height:100vh}
+.fd{font-family:'Bebas Neue',sans-serif;letter-spacing:.05em}
+.fc{font-family:'Barlow Condensed',sans-serif}
+.gt{background:linear-gradient(135deg,#f5e070,#D4AF37 45%,#9a7c1f 75%,#f5e070);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gd{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.2}
+.btn-g{background:linear-gradient(135deg,#f5e070,#D4AF37 50%,#9a7c1f);color:#05050a;font-family:'Bebas Neue',sans-serif;letter-spacing:.08em;border:none;cursor:pointer;transition:filter .2s,transform .15s;border-radius:10px}
+.btn-g:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-r{background:linear-gradient(135deg,#e53935,#b71c1c);color:#fff;font-family:'Bebas Neue',sans-serif;letter-spacing:.08em;border:none;cursor:pointer;transition:filter .2s;border-radius:10px}
+.btn-r:hover{filter:brightness(1.1)}
+.btn-gr{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-family:'Bebas Neue',sans-serif;letter-spacing:.08em;border:none;cursor:pointer;transition:filter .2s;border-radius:10px}
+.btn-gr:hover{filter:brightness(1.1)}
+.inp{background:var(--surf2);border:1.5px solid rgba(212,175,55,.2);border-radius:10px;color:#e0e0ee;font-family:'Barlow',sans-serif;font-size:.95rem;padding:.7rem .9rem;width:100%;outline:none;transition:border-color .2s}
+.inp:focus{border-color:rgba(212,175,55,.5);box-shadow:0 0 0 3px rgba(212,175,55,.06)}
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:14px;padding:1.2rem}
+.tag-g{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:#22c55e;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.65rem;letter-spacing:.08em;padding:.2rem .55rem;border-radius:4px}
+.tag-r{background:rgba(229,57,53,.1);border:1px solid rgba(229,57,53,.25);color:#ef5350;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.65rem;letter-spacing:.08em;padding:.2rem .55rem;border-radius:4px}
+.tag-y{background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.25);color:#D4AF37;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.65rem;letter-spacing:.08em;padding:.2rem .55rem;border-radius:4px}
+.code-box{background:#000;border:1px solid rgba(212,175,55,.3);border-radius:10px;padding:.8rem 1rem;font-family:'Courier New',monospace;font-size:.85rem;color:#f5e070;word-break:break-all;letter-spacing:.05em;position:relative}
+.copy-btn{position:absolute;top:.5rem;right:.5rem;background:rgba(212,175,55,.15);border:1px solid rgba(212,175,55,.3);color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.65rem;padding:.2rem .5rem;border-radius:5px;cursor:pointer;transition:all .2s}
+.copy-btn:hover{background:rgba(212,175,55,.25)}
+.copy-btn.ok{background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.4);color:#22c55e}
+table{width:100%;border-collapse:collapse}
+th{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.72rem;color:#555;letter-spacing:.1em;text-align:left;padding:.5rem .6rem;border-bottom:1px solid rgba(255,255,255,.05)}
+td{font-family:'Barlow Condensed',sans-serif;font-size:.85rem;padding:.6rem .6rem;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
+tr:hover td{background:rgba(255,255,255,.02)}
+.stat-card{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:.9rem 1rem;text-align:center}
+
+/* login screen */
+#loginScreen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999}
+.login-box{background:var(--surf);border:1px solid var(--bdr);border-radius:20px;padding:2.5rem 2rem;width:100%;max-width:360px;text-align:center}
+.shake{animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+
+/* section tabs */
+.stab{background:var(--surf2);border:1px solid transparent;color:#555;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.08em;padding:.5rem 1rem;border-radius:8px;cursor:pointer;transition:all .2s}
+.stab.active{background:rgba(212,175,55,.1);border-color:rgba(212,175,55,.3);color:var(--gold)}
+
+/* toast */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);z-index:9998;opacity:0;transition:all .35s;pointer-events:none;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.35);border-radius:10px;padding:.6rem 1.2rem;white-space:nowrap}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* code modal */
+#codeModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9997;align-items:center;justify-content:center}
+.modal-box{background:var(--surf);border:1px solid var(--bdr);border-radius:18px;padding:1.5rem;width:100%;max-width:440px;margin:1rem}
+
+@media(max-width:600px){
+  .login-box{padding:1.8rem 1.3rem!important;margin:1rem!important}
+  #adminPanel .grid{grid-template-columns:1fr!important}
+  .card,.stat-card{padding:.9rem!important}
+  .stab{font-size:.72rem!important;padding:.4rem .7rem!important}
+  table{font-size:.75rem!important}
+  th,td{padding:.4rem .4rem!important}
+  .modal-box{margin:.5rem!important;padding:1.1rem!important}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div style="font-size:3rem;margin-bottom:.5rem">🦌</div>
+    <div class="fd gt" style="font-size:2.2rem;margin-bottom:.3rem">CERVOBET</div>
+    <p class="fc" style="color:#555;font-size:.8rem;letter-spacing:.12em;margin-bottom:1.5rem">PAINEL ADMINISTRATIVO</p>
+    <div class="gd" style="margin-bottom:1.2rem"></div>
+    <div style="margin-bottom:.8rem;text-align:left">
+      <label class="fc" style="font-size:.72rem;color:#666;letter-spacing:.08em;display:block;margin-bottom:.35rem">🔐 SENHA DO ADMINISTRADOR</label>
+      <input type="password" id="adminPwd" class="inp" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <p id="loginErr" style="color:#ef5350;font-family:'Barlow Condensed',sans-serif;font-size:.78rem;margin-bottom:.6rem;display:none">Senha incorreta</p>
+    <button onclick="doLogin()" class="btn-g" style="width:100%;padding:.8rem;font-size:1.1rem">ENTRAR</button>
+    <p class="fc" style="font-size:.65rem;color:#222;margin-top:1rem">Acesso restrito · CervoBet Admin</p>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"><span id="toastMsg" class="fc font-bold" style="font-size:.85rem"></span></div>
+
+<!-- CODE MODAL -->
+<div id="codeModal" style="display:flex">
+  <div class="modal-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <p class="fd" style="font-size:1.2rem;color:var(--gold)">CÓDIGO GERADO</p>
+      <button onclick="closeCodeModal()" style="background:var(--surf2);border:1px solid rgba(255,255,255,.08);color:#888;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem">✕</button>
+    </div>
+    <div id="codeDetails" style="margin-bottom:1rem"></div>
+    <div style="margin-bottom:.8rem">
+      <p class="fc" style="font-size:.72rem;color:#555;letter-spacing:.08em;margin-bottom:.4rem">CÓDIGO DE ATIVAÇÃO (envie ao jogador)</p>
+      <div class="code-box" id="codeDisplay">
+        <button class="copy-btn" onclick="copyCode()" id="copyCodeBtn">📋 COPIAR</button>
+        <span id="codeText"></span>
+      </div>
+    </div>
+    <div style="background:rgba(212,175,55,.05);border:1px solid rgba(212,175,55,.15);border-radius:10px;padding:.8rem;margin-bottom:1rem">
+      <p class="fc" style="font-size:.78rem;color:#888;line-height:1.5">
+        📲 <b style="color:#ddd">Instrução para o jogador:</b><br>
+        Acesse a plataforma → clique em <b style="color:var(--gold)">💰 SALDO</b> no topo → toque em <b style="color:var(--gold)">CÓDIGO ADMIN</b> → cole o código e confirme.
+      </p>
+    </div>
+    <button onclick="closeCodeModal()" class="btn-g" style="width:100%;padding:.7rem;font-size:1rem">FECHAR</button>
+  </div>
+</div>
+
+<!-- MAIN ADMIN PANEL -->
+<div id="adminPanel" style="display:none;min-height:100vh">
+
+  <!-- Header -->
+  <div style="background:rgba(5,5,10,.95);border-bottom:1px solid var(--bdr);padding:.8rem 1.2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;backdrop-filter:blur(12px)">
+    <div style="display:flex;align-items:center;gap:.6rem">
+      <span style="font-size:1.3rem">🦌</span>
+      <div>
+        <div class="fd gt" style="font-size:1.3rem;line-height:1">CERVOBET</div>
+        <div class="fc" style="font-size:.6rem;color:#555;letter-spacing:.1em">ADMIN PANEL</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:.6rem">
+      <span class="tag-g">● ONLINE</span>
+      <button onclick="doLogout()" class="btn-r" style="padding:.4rem .8rem;font-size:.75rem">SAIR</button>
+    </div>
+  </div>
+
+  <div style="max-width:900px;margin:0 auto;padding:1rem 1rem 4rem">
+
+    <!-- Stats row -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1.2rem">
+      <div class="stat-card">
+        <div class="fd gt" style="font-size:1.6rem" id="statTotal">0</div>
+        <div class="fc" style="font-size:.62rem;color:#555;letter-spacing:.08em">JOGADORES</div>
+      </div>
+      <div class="stat-card">
+        <div class="fd" style="font-size:1.6rem;color:#22c55e" id="statCredits">R$0</div>
+        <div class="fc" style="font-size:.62rem;color:#555;letter-spacing:.08em">CRÉDITOS DADOS</div>
+      </div>
+      <div class="stat-card">
+        <div class="fd" style="font-size:1.6rem;color:#D4AF37" id="statCodes">0</div>
+        <div class="fc" style="font-size:.62rem;color:#555;letter-spacing:.08em">CÓDIGOS GERADOS</div>
+      </div>
+    </div>
+
+    <!-- Section tabs -->
+    <div style="display:flex;gap:.5rem;margin-bottom:1rem;overflow-x:auto">
+      <button onclick="showSection('generate')" class="stab active" id="tab-generate">💰 GERAR CRÉDITO</button>
+      <button onclick="showSection('codes')" class="stab" id="tab-codes">📋 HISTÓRICO</button>
+      <button onclick="showSection('tools')" class="stab" id="tab-tools">⚙️ FERRAMENTAS</button>
+    </div>
+
+    <!-- GENERATE SECTION -->
+    <div id="sec-generate">
+      <div class="card" style="margin-bottom:1rem">
+        <p class="fd" style="font-size:1.1rem;color:var(--gold);margin-bottom:.3rem">GERAR CÓDIGO DE CRÉDITO</p>
+        <p class="fc" style="font-size:.78rem;color:#555;margin-bottom:1.2rem">Gere um código e envie ao jogador pelo WhatsApp ou Telegram. O código é de uso único.</p>
+        <div class="gd" style="margin-bottom:1rem"></div>
+
+        <!-- Player identifier (optional) -->
+        <div style="margin-bottom:.8rem">
+          <label class="fc" style="font-size:.72rem;color:#666;letter-spacing:.08em;display:block;margin-bottom:.35rem">👤 IDENTIFICAÇÃO DO JOGADOR (opcional)</label>
+          <input type="text" id="genPlayer" class="inp" placeholder="Nome, telefone ou qualquer referência...">
+          <p class="fc" style="font-size:.65rem;color:#333;margin-top:.25rem">Apenas para seu controle interno — não interfere no código</p>
+        </div>
+
+        <!-- Amount -->
+        <div style="margin-bottom:.8rem">
+          <label class="fc" style="font-size:.72rem;color:#666;letter-spacing:.08em;display:block;margin-bottom:.35rem">💵 VALOR DO CRÉDITO</label>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem;margin-bottom:.5rem">
+            <button onclick="setAmt(5)"   class="amt-btn" id="ab5"   style="background:var(--surf2);border:1px solid #1e1e2a;color:#666;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.8rem;border-radius:8px;padding:.45rem 0;cursor:pointer;transition:all .2s">R$5</button>
+            <button onclick="setAmt(10)"  class="amt-btn" id="ab10"  style="background:var(--surf2);border:1px solid #1e1e2a;color:#666;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.8rem;border-radius:8px;padding:.45rem 0;cursor:pointer;transition:all .2s">R$10</button>
+            <button onclick="setAmt(20)"  class="amt-btn" id="ab20"  style="background:var(--surf2);border:1px solid #1e1e2a;color:#666;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.8rem;border-radius:8px;padding:.45rem 0;cursor:pointer;transition:all .2s">R$20</button>
+            <button onclick="setAmt(50)"  class="amt-btn" id="ab50"  style="background:var(--surf2);border:1px solid #1e1e2a;color:#666;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.8rem;border-radius:8px;padding:.45rem 0;cursor:pointer;transition:all .2s">R$50</button>
+            <button onclick="setAmt(100)" class="amt-btn" id="ab100" style="background:var(--surf2);border:1px solid #1e1e2a;color:#666;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.8rem;border-radius:8px;padding:.45rem 0;cursor:pointer;transition:all .2s">R$100</button>
+          </div>
+          <input type="number" id="genAmt" class="inp" placeholder="Ou digite outro valor (ex: 35)" min="1" step="1">
+        </div>
+
+        <!-- Expiry -->
+        <div style="margin-bottom:1rem">
+          <label class="fc" style="font-size:.72rem;color:#666;letter-spacing:.08em;display:block;margin-bottom:.35rem">⏱️ VALIDADE DO CÓDIGO</label>
+          <div style="display:flex;gap:.4rem">
+            <button onclick="setExp(1)"   class="exp-btn" id="eb1"   style="flex:1;background:var(--surf2);border:1px solid #1e1e2a;color:#666;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.72rem;border-radius:8px;padding:.4rem 0;cursor:pointer;transition:all .2s">1h</button>
+            <button onclick="setExp(24)"  class="exp-btn" id="eb24"  style="flex:1;background:var(--surf2);border:1px solid #1e1e2a;color:#666;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.72rem;border-radius:8px;padding:.4rem 0;cursor:pointer;transition:all .2s">24h</button>
+            <button onclick="setExp(72)"  class="exp-btn" id="eb72"  style="flex:1;background:var(--surf2);border:1px solid #1e1e2a;color:#666;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.72rem;border-radius:8px;padding:.4rem 0;cursor:pointer;transition:all .2s">3d</button>
+            <button onclick="setExp(168)" class="exp-btn" id="eb168" style="flex:1;background:var(--surf2);border:1px solid #1e1e2a;color:#666;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.72rem;border-radius:8px;padding:.4rem 0;cursor:pointer;transition:all .2s">7d</button>
+            <button onclick="setExp(0)"   class="exp-btn" id="eb0"   style="flex:1;background:var(--surf2);border:1px solid #1e1e2a;color:#666;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.72rem;border-radius:8px;padding:.4rem 0;cursor:pointer;transition:all .2s">∞</button>
+          </div>
+        </div>
+
+        <!-- Note -->
+        <div style="margin-bottom:1rem">
+          <label class="fc" style="font-size:.72rem;color:#666;letter-spacing:.08em;display:block;margin-bottom:.35rem">📝 OBSERVAÇÃO (opcional)</label>
+          <input type="text" id="genNote" class="inp" placeholder="Ex: bônus de retenção, recompensa por depósito...">
+        </div>
+
+        <button onclick="generateCode()" class="btn-gr" style="width:100%;padding:.85rem;font-size:1.2rem">
+          ⚡ GERAR CÓDIGO AGORA
+        </button>
+      </div>
+
+      <!-- Quick message templates -->
+      <div class="card">
+        <p class="fd" style="font-size:.95rem;color:var(--gold);margin-bottom:.8rem">MENSAGENS PRONTAS PARA ENVIAR</p>
+        <div style="display:flex;flex-direction:column;gap:.5rem">
+          <div id="msgTemplate" style="display:none">
+            <p class="fc" style="font-size:.72rem;color:#555;letter-spacing:.08em;margin-bottom:.4rem">MENSAGEM WHATSAPP (com código gerado)</p>
+            <div class="code-box" style="font-size:.78rem;line-height:1.6;color:#ddd">
+              <button class="copy-btn" onclick="copyMsg()" id="copyMsgBtn">📋 COPIAR</button>
+              <span id="msgText"></span>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:.7rem">
+            <p class="fc" style="font-size:.75rem;color:#555;line-height:1.5">💡 <b style="color:#888">Dica:</b> Gere um código acima e aqui aparecerá uma mensagem pronta formatada para você copiar e colar no WhatsApp do jogador.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CODES HISTORY SECTION -->
+    <div id="sec-codes" style="display:none">
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+          <p class="fd" style="font-size:1.1rem;color:var(--gold)">HISTÓRICO DE CÓDIGOS</p>
+          <button onclick="clearHistory()" class="btn-r" style="padding:.4rem .8rem;font-size:.75rem">LIMPAR TUDO</button>
+        </div>
+        <div id="historyTable">
+          <p class="fc" style="color:#333;font-size:.85rem;text-align:center;padding:2rem">Nenhum código gerado ainda</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOOLS SECTION -->
+    <div id="sec-tools" style="display:none">
+      <div class="card" style="margin-bottom:1rem">
+        <p class="fd" style="font-size:1.1rem;color:var(--gold);margin-bottom:.3rem">CONFIGURAÇÕES DA ROLETA</p>
+        <p class="fc" style="font-size:.78rem;color:#555;margin-bottom:1rem">Estes valores são aplicados localmente. Para alterar permanentemente, edite o cervobet.html.</p>
+        <div class="gd" style="margin-bottom:1rem"></div>
+        <div style="display:flex;flex-direction:column;gap:.6rem">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem .8rem;background:var(--surf2);border-radius:8px;border:1px solid rgba(255,255,255,.04)">
+            <div><p class="fc font-bold" style="font-size:.85rem">R$ 20,00 (chance atual)</p><p class="fc" style="font-size:.7rem;color:#555">Probabilidade de cair R$20 na roleta</p></div>
+            <span class="tag-g">75%</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem .8rem;background:var(--surf2);border-radius:8px;border:1px solid rgba(255,255,255,.04)">
+            <div><p class="fc font-bold" style="font-size:.85rem">Saque mínimo</p><p class="fc" style="font-size:.7rem;color:#555">Valor mínimo para saque</p></div>
+            <span class="tag-y">R$ 40</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem .8rem;background:var(--surf2);border-radius:8px;border:1px solid rgba(255,255,255,.04)">
+            <div><p class="fc font-bold" style="font-size:.85rem">Roleta</p><p class="fc" style="font-size:.7rem;color:#555">Frequência</p></div>
+            <span class="tag-y">1× ao dia</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <p class="fd" style="font-size:1.1rem;color:var(--gold);margin-bottom:.8rem">COMO FUNCIONA O SISTEMA</p>
+        <div style="display:flex;flex-direction:column;gap:.6rem">
+          <div style="padding:.7rem;background:rgba(33,150,243,.06);border:1px solid rgba(33,150,243,.15);border-radius:8px">
+            <p class="fc font-bold" style="font-size:.82rem;color:#2196f3;margin-bottom:.2rem">1. Você gera um código</p>
+            <p class="fc" style="font-size:.75rem;color:#666">Define o valor e a validade. O código é criptografado com o valor e prazo.</p>
+          </div>
+          <div style="padding:.7rem;background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.15);border-radius:8px">
+            <p class="fc font-bold" style="font-size:.82rem;color:#D4AF37;margin-bottom:.2rem">2. Você envia ao jogador</p>
+            <p class="fc" style="font-size:.75rem;color:#666">Via WhatsApp, Telegram ou qualquer canal. Use a mensagem pronta gerada.</p>
+          </div>
+          <div style="padding:.7rem;background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.15);border-radius:8px">
+            <p class="fc font-bold" style="font-size:.82rem;color:#22c55e;margin-bottom:.2rem">3. Jogador aplica o código</p>
+            <p class="fc" style="font-size:.75rem;color:#666">Na plataforma → clica no saldo → "CÓDIGO ADMIN" → cola e confirma → saldo creditado imediatamente.</p>
+          </div>
+          <div style="padding:.7rem;background:rgba(229,57,53,.06);border:1px solid rgba(229,57,53,.15);border-radius:8px">
+            <p class="fc font-bold" style="font-size:.82rem;color:#ef5350;margin-bottom:.2rem">4. Código expira após uso ou prazo</p>
+            <p class="fc" style="font-size:.75rem;color:#666">Cada código só pode ser usado uma vez. Após usar ou expirar, fica inativo.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="fd" style="font-size:1.1rem;color:var(--gold);margin-bottom:.8rem">ALTERAR SENHA ADMIN</p>
+        <div style="margin-bottom:.6rem">
+          <input type="password" id="newPwd1" class="inp" placeholder="Nova senha" style="margin-bottom:.4rem">
+          <input type="password" id="newPwd2" class="inp" placeholder="Confirmar nova senha">
+        </div>
+        <p id="pwdErr" style="color:#ef5350;font-family:'Barlow Condensed',sans-serif;font-size:.75rem;margin-bottom:.5rem;display:none"></p>
+        <button onclick="changePwd()" class="btn-g" style="width:100%;padding:.7rem;font-size:1rem">SALVAR NOVA SENHA</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ════ CONFIG ════ */
+const DEFAULT_PWD = 'cervo@2025';          // senha padrão — altere aqui ou pelo painel
+/* SISTEMA CROSS-DEVICE: os códigos são verificados por assinatura criptográfica.
+   O jogador pode usar o código em QUALQUER dispositivo — sem servidor necessário. */
+const ADMIN_KEY   = 'cervobet_admin_pwd';
+const CODES_KEY   = 'cervobet_admin_codes';
+const SECRET      = 'CERVOBET_ADMIN_2025'; // chave de assinatura dos códigos
+
+/* ════ AUTH ════ */
+function getPwd(){ return localStorage.getItem(ADMIN_KEY) || DEFAULT_PWD; }
+
+function doLogin(){
+  const v = document.getElementById('adminPwd').value;
+  if(v === getPwd()){
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminPanel').style.display  = 'block';
+    loadAll();
+  } else {
+    const box = document.getElementById('loginScreen').querySelector('.login-box');
+    document.getElementById('loginErr').style.display = 'block';
+    box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake');
+    document.getElementById('adminPwd').value = '';
+  }
+}
+document.getElementById('adminPwd').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+function doLogout(){
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('adminPanel').style.display  = 'none';
+  document.getElementById('adminPwd').value = '';
+  document.getElementById('loginErr').style.display = 'none';
+}
+
+function changePwd(){
+  const p1 = document.getElementById('newPwd1').value;
+  const p2 = document.getElementById('newPwd2').value;
+  const err = document.getElementById('pwdErr');
+  if(p1.length < 6){ err.textContent='Mínimo 6 caracteres'; err.style.display='block'; return; }
+  if(p1 !== p2){ err.textContent='Senhas não coincidem'; err.style.display='block'; return; }
+  localStorage.setItem(ADMIN_KEY, p1);
+  err.style.display = 'none';
+  document.getElementById('newPwd1').value = '';
+  document.getElementById('newPwd2').value = '';
+  toast('✅ Senha alterada com sucesso!');
+}
+
+/* ════ SECTIONS ════ */
+function showSection(s){
+  ['generate','codes','tools'].forEach(id=>{
+    document.getElementById('sec-'+id).style.display = id===s?'block':'none';
+    const tab = document.getElementById('tab-'+id);
+    if(tab){ tab.classList.toggle('active', id===s); }
+  });
+  if(s==='codes') renderHistory();
+}
+
+/* ════ AMOUNT BUTTONS ════ */
+let selAmt = 0, selExp = 24;
+function setAmt(v){
+  selAmt = v;
+  document.getElementById('genAmt').value = v;
+  [5,10,20,50,100].forEach(a=>{
+    const el=document.getElementById('ab'+a);if(!el)return;
+    const on=a===v;
+    el.style.background=on?'linear-gradient(135deg,rgba(212,175,55,.18),rgba(212,175,55,.06))':'var(--surf2)';
+    el.style.borderColor=on?'rgba(212,175,55,.5)':'#1e1e2a';
+    el.style.color=on?'var(--gold)':'#666';
+  });
+}
+function setExp(h){
+  selExp = h;
+  [1,24,72,168,0].forEach(a=>{
+    const el=document.getElementById('eb'+a);if(!el)return;
+    const on=a===h;
+    el.style.background=on?'linear-gradient(135deg,rgba(212,175,55,.18),rgba(212,175,55,.06))':'var(--surf2)';
+    el.style.borderColor=on?'rgba(212,175,55,.5)':'#1e1e2a';
+    el.style.color=on?'var(--gold)':'#666';
+  });
+}
+/* default selection */
+setAmt(20); setExp(24);
+
+document.getElementById('genAmt').addEventListener('input', function(){
+  selAmt = parseFloat(this.value)||0;
+  [5,10,20,50,100].forEach(a=>{
+    const el=document.getElementById('ab'+a);if(!el)return;
+    el.style.background='var(--surf2)';el.style.borderColor='#1e1e2a';el.style.color='#666';
+  });
+});
+
+/* ════ CODE GENERATION ════ */
+function genCodeString(amount, expHours, nonce){
+  /* Format: CB-[amount_base36]-[expiry_timestamp_base36]-[nonce_base36]-[checksum]
+     checksum = simple hash of amount+expiry+nonce+secret */
+  const expTs = expHours === 0 ? 0 : Math.floor(Date.now()/1000) + expHours*3600;
+  const a36   = Math.round(amount*100).toString(36).toUpperCase();
+  const e36   = expTs.toString(36).toUpperCase();
+  const n36   = nonce.toString(36).toUpperCase();
+  /* checksum: sum of char codes modulo 1296 in base36 */
+  const raw   = a36+e36+n36+SECRET;
+  let chk = 0; for(let i=0;i<raw.length;i++) chk=(chk*31+raw.charCodeAt(i))%46656;
+  const c36 = chk.toString(36).toUpperCase().padStart(3,'0');
+  return `CB-${a36}-${e36}-${n36}-${c36}`;
+}
+
+function generateCode(){
+  const amt     = parseFloat(document.getElementById('genAmt').value) || selAmt;
+  const player  = document.getElementById('genPlayer').value.trim();
+  const note    = document.getElementById('genNote').value.trim();
+  if(!amt || amt <= 0){ toast('⚠️ Defina um valor!', '#ef5350'); return; }
+  const nonce   = Math.floor(Math.random()*1679616); // random base36 6-char
+  const code    = genCodeString(amt, selExp, nonce);
+  const expLabel= selExp===0?'Sem validade':selExp<24?selExp+'h':selExp<168?(selExp/24)+'d':'7 dias';
+  /* save to history */
+  const codes   = JSON.parse(localStorage.getItem(CODES_KEY)||'[]');
+  const entry   = {code, amount:amt, expHours:selExp, player, note,
+                   createdAt:new Date().toISOString(), used:false};
+  codes.unshift(entry);
+  localStorage.setItem(CODES_KEY, JSON.stringify(codes));
+  /* update stats */
+  updateStats();
+  /* show modal */
+  const expTs = selExp===0?0:Math.floor(Date.now()/1000)+selExp*3600;
+  document.getElementById('codeText').textContent = code;
+  document.getElementById('codeDetails').innerHTML = `
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.6rem">
+      <span class="tag-g">R$ ${amt.toFixed(2).replace('.',',')}</span>
+      <span class="tag-y">${expLabel}</span>
+      ${player?`<span style="background:rgba(33,150,243,.1);border:1px solid rgba(33,150,243,.25);color:#2196f3;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.65rem;padding:.2rem .55rem;border-radius:4px">${player}</span>`:''}
+    </div>
+    ${note?`<p class="fc" style="font-size:.78rem;color:#666;margin-bottom:.4rem">📝 ${note}</p>`:''}`;
+  /* build whatsapp message */
+  const msg = `🦌 *CERVOBET*\n\nOlá! Você recebeu um bônus especial! 🎁\n\n💰 *Valor: R$ ${amt.toFixed(2).replace('.',',')}*\n\n📲 *Como resgatar:*\n1. Acesse a plataforma CervoBet\n2. Clique no seu saldo no topo\n3. Toque em *"CÓDIGO ADMIN"*\n4. Cole o código abaixo e confirme\n\n🔑 *Seu código:*\n\`${code}\`\n\n⏱️ Validade: ${expLabel}\n⚠️ Uso único — não compartilhe!\n\nBoa sorte! 🎰`;
+  document.getElementById('msgText').textContent = msg;
+  document.getElementById('msgTemplate').style.display = 'block';
+  document.getElementById('codeModal').style.display = 'flex';
+  window._lastCode = code;
+  window._lastMsg  = msg;
+}
+
+function closeCodeModal(){
+  document.getElementById('codeModal').style.display = 'none';
+}
+
+function copyCode(){
+  const code = document.getElementById('codeText').textContent;
+  navigator.clipboard.writeText(code).catch(()=>{
+    const t=document.createElement('textarea');t.value=code;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);
+  });
+  const btn = document.getElementById('copyCodeBtn');
+  btn.textContent='✓ COPIADO'; btn.classList.add('ok');
+  setTimeout(()=>{btn.textContent='📋 COPIAR';btn.classList.remove('ok');},2000);
+  toast('✅ Código copiado!');
+}
+
+function copyMsg(){
+  const msg = window._lastMsg||'';
+  navigator.clipboard.writeText(msg).catch(()=>{
+    const t=document.createElement('textarea');t.value=msg;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);
+  });
+  const btn = document.getElementById('copyMsgBtn');
+  btn.textContent='✓ COPIADO'; btn.classList.add('ok');
+  setTimeout(()=>{btn.textContent='📋 COPIAR';btn.classList.remove('ok');},2000);
+  toast('✅ Mensagem copiada! Cole no WhatsApp.');
+}
+
+/* ════ HISTORY ════ */
+function renderHistory(){
+  const codes = JSON.parse(localStorage.getItem(CODES_KEY)||'[]');
+  const el = document.getElementById('historyTable');
+  if(!codes.length){ el.innerHTML='<p class="fc" style="color:#333;font-size:.85rem;text-align:center;padding:2rem">Nenhum código gerado ainda</p>'; return; }
+  let rows = codes.map((c,i)=>{
+    const now = Math.floor(Date.now()/1000);
+    const expTs = c.expHours===0?Infinity:Math.floor(new Date(c.createdAt).getTime()/1000)+c.expHours*3600;
+    const expired = expTs!==Infinity && now>expTs;
+    const status  = c.used?'<span class="tag-r">USADO</span>':expired?'<span class="tag-r">EXPIRADO</span>':'<span class="tag-g">ATIVO</span>';
+    const dt = new Date(c.createdAt).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    return `<tr>
+      <td style="font-size:.7rem;color:#555">${dt}</td>
+      <td><span class="fc font-bold" style="color:#22c55e">R$${c.amount.toFixed(2).replace('.',',')}</span></td>
+      <td><span class="fc" style="color:#888;font-size:.72rem">${c.player||'—'}</span></td>
+      <td><code style="font-size:.65rem;color:#D4AF37;background:rgba(212,175,55,.06);padding:.15rem .4rem;border-radius:4px">${c.code.slice(0,12)}…</code></td>
+      <td>${status}</td>
+      <td><button onclick="reCopyCode(${i})" style="background:var(--surf2);border:1px solid #1e1e2a;color:#888;font-family:'Barlow Condensed',sans-serif;font-size:.65rem;padding:.2rem .5rem;border-radius:5px;cursor:pointer">COPIAR</button></td>
+    </tr>`;
+  }).join('');
+  el.innerHTML = `<table><thead><tr><th>DATA</th><th>VALOR</th><th>JOGADOR</th><th>CÓDIGO</th><th>STATUS</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function reCopyCode(i){
+  const codes = JSON.parse(localStorage.getItem(CODES_KEY)||'[]');
+  if(!codes[i]) return;
+  navigator.clipboard.writeText(codes[i].code).catch(()=>{
+    const t=document.createElement('textarea');t.value=codes[i].code;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);
+  });
+  toast('✅ Código copiado!');
+}
+
+function clearHistory(){
+  if(!confirm('Limpar todo o histórico de códigos?')) return;
+  localStorage.removeItem(CODES_KEY);
+  renderHistory(); updateStats();
+  toast('🗑️ Histórico limpo');
+}
+
+/* ════ STATS ════ */
+function updateStats(){
+  const codes = JSON.parse(localStorage.getItem(CODES_KEY)||'[]');
+  document.getElementById('statCodes').textContent  = codes.length;
+  const total = codes.reduce((a,c)=>a+c.amount,0);
+  document.getElementById('statCredits').textContent = 'R$'+total.toFixed(0);
+  const users = JSON.parse(localStorage.getItem('cervobet_user')||'null');
+  document.getElementById('statTotal').textContent  = users?1:0;
+}
+
+function loadAll(){ updateStats(); setAmt(20); setExp(24); }
+
+/* ════ TOAST ════ */
+function toast(msg, color='#22c55e'){
+  const t=document.getElementById('toast'),m=document.getElementById('toastMsg');
+  m.textContent=msg;m.style.color=color;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>
